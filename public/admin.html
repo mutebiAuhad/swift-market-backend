@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swift Market — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <nav>
+    <a class="logo" href="#" onclick="return false;">
+      <svg viewBox="0 0 190 34" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="24" font-family="Fraunces, serif" font-weight="700" font-size="24" class="logo-word-a">SWIFT</text>
+        <text x="80" y="24" font-family="Fraunces, serif" font-weight="700" font-size="24" class="logo-word-b">MARKET</text>
+      </svg>
+    </a>
+    <span class="muted" style="font-weight:700;">ADMIN</span>
+    <button class="theme-toggle" id="themeToggle"></button>
+  </nav>
+</header>
+<main class="wrap" id="app" style="max-width:900px;"></main>
+<script>
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const root = document.documentElement;
+  const isDark = root.getAttribute('data-theme') === 'dark' || (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+});
+const API = '/api';
+const app = document.getElementById('app');
+function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+function fmt(n) { return 'UGX ' + Number(n).toLocaleString(); }
+async function api(path, opts = {}, token) {
+  const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+  if (token) headers.Authorization = 'Bearer ' + token;
+  const res = await fetch(API + path, Object.assign({}, opts, { headers }));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+let adminToken = sessionStorage.getItem('sm_admin_token'); // sessionStorage: cleared when the tab closes
+
+async function render() {
+  if (!adminToken) return renderLogin();
+  try {
+    const [{ businesses }, { customers }, { payments }, { orders }] = await Promise.all([
+      api('/admin/businesses', {}, adminToken), api('/admin/customers', {}, adminToken),
+      api('/admin/payments', {}, adminToken), api('/admin/orders', {}, adminToken),
+    ]);
+    renderDashboard(businesses, customers, payments, orders);
+  } catch (e) { adminToken = null; sessionStorage.removeItem('sm_admin_token'); renderLogin(); }
+}
+function renderLogin() {
+  app.innerHTML = `
+    <h2 style="margin:30px 0 20px;">Admin sign in</h2>
+    <div class="card" style="max-width:360px;">
+      <div class="field"><label>Admin email</label><input id="email" type="email"></div>
+      <div class="field"><label>Password</label><input id="password" type="password"></div>
+      <button class="btn btn-primary" style="width:100%;" onclick="login()">Enter</button>
+    </div>`;
+}
+window.login = async function() {
+  try {
+    const { token } = await api('/admin/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('email').value.trim(), password: document.getElementById('password').value }) });
+    adminToken = token; sessionStorage.setItem('sm_admin_token', token); render();
+  } catch (e) { alert(e.message); }
+};
+window.logout = function() { adminToken = null; sessionStorage.removeItem('sm_admin_token'); render(); };
+
+function renderDashboard(businesses, customers, payments, orders) {
+  const pending = businesses.filter(b => b.status === 'pending');
+  const active = businesses.filter(b => b.status === 'active');
+  app.innerHTML = `
+    <div class="row" style="margin:24px 0;"><h2>Platform administration</h2><button class="btn btn-ghost btn-sm" onclick="logout()">Log out</button></div>
+
+    <h3 style="font-size:1rem;margin-bottom:12px;">Pending approval (${pending.length})</h3>
+    ${pending.length === 0 ? '<p class="muted" style="margin-bottom:24px;">Nothing waiting.</p>' : pending.map(b => `
+      <div class="card row" style="margin-bottom:10px;">
+        <div><strong>${esc(b.name)}</strong> ${b.freeSlot ? '<span class="badge badge-free">Free slot</span>' : ''}<br>
+          <span class="muted">${esc(b.contact)} · ${esc(b.email)}</span><br>
+          <span class="muted">ID: <code>${esc(b.fullId)}</code></span></div>
+        <button class="btn btn-sky btn-sm" onclick="approve('${b.fullId}')">Activate</button>
+      </div>`).join('')}
+
+    <div class="divider"></div>
+    <h3 style="font-size:1rem;margin-bottom:12px;">Active businesses (${active.length})</h3>
+    ${active.length === 0 ? '<p class="muted">None yet.</p>' : active.map(b => `
+      <div class="card row" style="margin-bottom:10px;">
+        <div><strong>${esc(b.name)}</strong> ${b.freeSlot ? '<span class="badge badge-free">Free slot</span>' : ''}<br>
+          <span class="muted">${esc(b.contact)} · Chat: ${b.chatEnabled ? 'on' : 'off'} · Auto-renew: ${b.autoRenew ? 'on' : 'off'}</span><br>
+          <span class="muted">ID: <code>${esc(b.fullId)}</code> · Subscription until ${b.subscriptionExpiresAt ? new Date(b.subscriptionExpiresAt).toLocaleDateString() : '—'}</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="suspend('${b.fullId}')">Suspend</button>
+      </div>`).join('')}
+
+    <div class="divider"></div>
+    <h3 style="font-size:1rem;margin-bottom:12px;">Registered customers (${customers.length})</h3>
+    ${customers.length === 0 ? '<p class="muted">None yet.</p>' : `<div class="card" style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+      <tr style="text-align:left;color:var(--text-soft);"><th style="padding:6px;">Name</th><th style="padding:6px;">Email</th><th style="padding:6px;">Phone</th><th style="padding:6px;">Marketing OK</th></tr>
+      ${customers.map(c => `<tr style="border-top:1px solid var(--border);"><td style="padding:6px;">${esc(c.name)}</td><td style="padding:6px;">${esc(c.email)}</td><td style="padding:6px;">${esc(c.phone || '')}</td><td style="padding:6px;">${c.marketingOptIn ? 'Yes' : 'No'}</td></tr>`).join('')}
+    </table></div>`}
+
+    <div class="divider"></div>
+    <h3 style="font-size:1rem;margin-bottom:12px;">Recent subscription payments</h3>
+    ${payments.length === 0 ? '<p class="muted">None yet.</p>' : payments.slice(0,15).map(p => `<p class="muted">${new Date(p.created_at).toLocaleString()} · ${fmt(p.amount)} · ${esc(p.status)} · ${esc(p.phone)}</p>`).join('')}
+
+    <div class="divider"></div>
+    <h3 style="font-size:1rem;margin-bottom:12px;">Recent customer orders</h3>
+    ${orders.length === 0 ? '<p class="muted">None yet.</p>' : orders.slice(0,15).map(o => `<p class="muted">${new Date(o.created_at).toLocaleString()} · ${fmt(o.amount)} · Qty ${o.quantity} · ${esc(o.payment_status)}</p>`).join('')}
+  `;
+}
+window.approve = async function(id) { try { await api(`/admin/businesses/${id}/approve`, { method: 'POST' }, adminToken); render(); } catch (e) { alert(e.message); } };
+window.suspend = async function(id) { try { await api(`/admin/businesses/${id}/suspend`, { method: 'POST' }, adminToken); render(); } catch (e) { alert(e.message); } };
+render();
+</script>
+</body>
+</html>

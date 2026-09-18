@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swift Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <nav>
+    <a class="logo" href="#" onclick="return false;">
+      <svg viewBox="0 0 190 34" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="24" font-family="Fraunces, serif" font-weight="700" font-size="24" class="logo-word-a">SWIFT</text>
+        <text x="80" y="24" font-family="Fraunces, serif" font-weight="700" font-size="24" class="logo-word-b">MARKET</text>
+      </svg>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn" data-tab="market">Marketplace</button>
+      <button class="tab-btn" data-tab="sell">Register Business</button>
+    </div>
+    <div class="navright">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"></button>
+      <button class="btn btn-ghost btn-sm" id="accountBtn">Sign in</button>
+    </div>
+  </nav>
+</header>
+<main class="wrap" id="app"></main>
+
+<div class="consent-bar" id="consentBar" style="display:none;">
+  <p>Swift Market uses cookies and, once you accept, may analyze how you use the site to help the businesses listed here understand their customers better. Read our <a href="#" onclick="showPolicy();return false;">Privacy &amp; Data Notice</a>.</p>
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-ghost btn-sm" onclick="setConsent(false)">Essential only</button>
+    <button class="btn btn-gold btn-sm" onclick="setConsent(true)">Accept</button>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

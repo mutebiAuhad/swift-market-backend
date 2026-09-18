@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order status — Swift Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap" style="max-width:520px;padding-top:80px;">
+  <div class="card" id="result">
+    <h2 style="margin-bottom:10px;">Checking your payment…</h2>
+    <p>Please wait a moment.</p>
+  </div>
+  <p style="margin-top:20px;"><a href="/" style="color:var(--sky-deep);font-weight:600;">← Back to Swift Market</a></p>
+</main>
+<script>
+async function check() {
+  const params = new URLSearchParams(window.location.search);
+  const txRef = params.get('ref') || params.get('tx_ref');
+  const transactionId = params.get('transaction_id');
+  const status = params.get('status');
+  const box = document.getElementById('result');
+  if (!txRef || !transactionId) {
+    box.innerHTML = '<h2>Something went wrong</h2><p>We could not find your payment details. If you were charged, contact support with your order reference.</p>';
+    return;
+  }
+  if (status === 'cancelled') {
+    box.innerHTML = '<h2>Payment cancelled</h2><p>You cancelled the payment. No money was taken.</p>';
+    return;
+  }
+  try {
+    const res = await fetch(`/api/orders/verify/${txRef}?transaction_id=${transactionId}`);
+    const data = await res.json();
+    if (data.status === 'PAID') {
+      box.innerHTML = '<h2 style="color:var(--good);">Payment confirmed</h2><p>Your order is booked. The dealer has been notified.</p>';
+    } else {
+      box.innerHTML = '<h2>Payment not confirmed</h2><p>We could not confirm this payment. If you were charged, contact support with reference ' + txRef + '.</p>';
+    }
+  } catch (e) {
+    box.innerHTML = '<h2>Could not verify payment</h2><p>' + e.message + '</p>';
+  }
+}
+check();
+</script>
+</body>
+</html>
