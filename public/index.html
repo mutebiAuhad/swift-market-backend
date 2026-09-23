@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swift Market</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wordmark">SWIFT <span>MARKET</span></div>
+  <nav class="top-nav">
+    <a href="/">Browse</a>
+    <button class="linklike" id="navUpload">Upload</button>
+    <a href="/account.html" id="navAccount">Account</a>
+    <button class="linklike hidden" id="navLogout">Log out</button>
+    <button class="linklike" id="navLogin">Log in</button>
+    <button class="btn btn-primary" id="navRegister" style="padding:7px 14px;">Join</button>
+  </nav>
+</header>
+
+<div class="container">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <h1 class="section-title" style="margin:0;">Browse photos &amp; videos</h1>
+    <div>
+      <select id="typeFilter" style="width:auto;">
+        <option value="">All media</option>
+        <option value="photo">Photos only</option>
+        <option value="video">Videos only</option>
+      </select>
+    </div>
+  </div>
+  <p class="muted">Anyone can browse. Create an account and subscribe to upload, download, and comment.</p>
+
+  <div id="alertBox"></div>
+  <div class="grid" id="mediaGrid"></div>
+  <div class="text-center" style="margin-top:20px;">
+    <button class="btn btn-outline hidden" id="loadMoreBtn">Load more</button>
+  </div>
+</div>
+
+<!-- Media detail modal -->
+<div class="modal-backdrop hidden" id="detailModal">
+  <div class="modal" style="max-width:640px;">
+    <button class="close" data-close="detailModal">&times;</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Login modal -->
+<div class="modal-backdrop hidden" id="loginModal">
+  <div class="modal">
+    <button class="close" data-close="loginModal">&times;</button>
+    <h2>Log in</h2>
+    <div class="alert alert-error hidden" id="loginError"></div>
+    <form id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+      <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+      <button class="btn btn-dark" style="width:100%;" type="submit">Log in</button>
+    </form>
+    <p class="muted text-center" style="margin-top:12px;">
+      <a href="#" id="forgotLink">Forgot password?</a>
+    </p>
+  </div>
+</div>
+
+<!-- Register modal -->
+<div class="modal-backdrop hidden" id="registerModal">
+  <div class="modal">
+    <button class="close" data-close="registerModal">&times;</button>
+    <h2>Create your account</h2>
+    <p class="muted">A $40/month subscription is required to upload, download, and comment. Browsing is always free.</p>
+    <div class="alert alert-error hidden" id="registerError"></div>
+    <form id="registerForm">
+      <div class="form-group"><label>Display name</label><input type="text" name="displayName" required></div>
+      <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+      <div class="form-group"><label>Password (min 8 characters)</label><input type="password" name="password" minlength="8" required></div>
+      <button class="btn btn-primary" style="width:100%;" type="submit">Create account</button>
+    </form>
+  </div>
+</div>
+
+<!-- Forgot password modal -->
+<div class="modal-backdrop hidden" id="forgotModal">
+  <div class="modal">
+    <button class="close" data-close="forgotModal">&times;</button>
+    <h2>Reset password</h2>
+    <div class="alert alert-info hidden" id="forgotMsg"></div>
+    <form id="forgotRequestForm">
+      <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+      <button class="btn btn-outline" style="width:100%;" type="submit">Send reset code</button>
+    </form>
+    <hr style="margin:18px 0; border-color:var(--border);">
+    <form id="forgotResetForm">
+      <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+      <div class="form-group"><label>Reset code</label><input type="text" name="code" required></div>
+      <div class="form-group"><label>New password</label><input type="password" name="newPassword" minlength="8" required></div>
+      <button class="btn btn-dark" style="width:100%;" type="submit">Set new password</button>
+    </form>
+  </div>
+</div>
+
+<!-- Upload modal -->
+<div class="modal-backdrop hidden" id="uploadModal">
+  <div class="modal">
+    <button class="close" data-close="uploadModal">&times;</button>
+    <h2>Upload photo or video</h2>
+    <div class="alert alert-error hidden" id="uploadError"></div>
+    <form id="uploadForm">
+      <div class="form-group"><label>File</label><input type="file" name="file" accept="image/*,video/*" required></div>
+      <div class="form-group"><label>Title</label><input type="text" name="title" required></div>
+      <div class="form-group"><label>Description (optional)</label><textarea name="description" rows="3"></textarea></div>
+      <button class="btn btn-primary" style="width:100%;" type="submit">Upload</button>
+    </form>
+  </div>
+</div>
+
+<footer class="site">Swift Market &copy; 2026</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

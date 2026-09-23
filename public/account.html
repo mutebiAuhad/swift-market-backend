@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Account — Swift Market</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wordmark">SWIFT <span>MARKET</span></div>
+  <nav class="top-nav">
+    <a href="/">Browse</a>
+  </nav>
+</header>
+
+<div class="container" style="max-width:640px;">
+  <div id="loggedOutBox" class="hidden">
+    <p>Please log in from the <a href="/">browse page</a> to manage your account.</p>
+  </div>
+
+  <div id="accountBox" class="hidden">
+    <h1 class="section-title">Your subscription</h1>
+    <div id="statusBanner"></div>
+
+    <div id="subscribeSection">
+      <p class="muted">Swift Market membership is $40/month and unlocks uploading, downloading, and commenting. Browsing is always free.</p>
+
+      <div class="card" style="padding:18px; margin-bottom:16px;">
+        <h3 style="margin-top:0;">Pay by card (instant)</h3>
+        <p class="muted">Processed securely by Stripe. Your subscription renews automatically each month.</p>
+        <button class="btn btn-primary" id="stripeBtn">Subscribe with card — $40/month</button>
+      </div>
+
+      <div class="card" style="padding:18px;">
+        <h3 style="margin-top:0;">Pay by bank transfer</h3>
+        <div id="bankDetails" class="muted">Loading bank details…</div>
+        <form id="proofForm" style="margin-top:14px;">
+          <div class="form-group">
+            <label>Upload payment proof (screenshot or photo of receipt)</label>
+            <input type="file" name="proof" accept="image/*" required>
+          </div>
+          <div class="form-group">
+            <label>Reference / note (optional)</label>
+            <input type="text" name="note" placeholder="e.g. transaction ID">
+          </div>
+          <button class="btn btn-outline" style="width:100%;" type="submit">Submit proof of payment</button>
+        </form>
+        <p class="muted" style="margin-top:8px;">Your account is activated once the administrator verifies your transfer — usually within a day.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site">Swift Market &copy; 2026</footer>
+
+<script src="/account.js"></script>
+</body>
+</html>

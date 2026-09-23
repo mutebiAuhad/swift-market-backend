@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — Swift Market</title>
+<link rel="stylesheet" href="/style.css">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<header class="top">
+  <div class="wordmark">SWIFT <span>MARKET</span> <small style="font-size:0.6em; color:var(--yellow);">ADMIN</small></div>
+  <nav class="top-nav">
+    <button class="linklike hidden" id="logoutBtn">Log out</button>
+  </nav>
+</header>
+
+<div class="container">
+
+  <div id="loginBox" style="max-width:400px; margin:40px auto;">
+    <h1 class="section-title">Administrator login</h1>
+    <div class="alert alert-error hidden" id="loginError"></div>
+    <form id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+      <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+      <div class="form-group"><label>2FA code (if enabled)</label><input type="text" name="totpToken" placeholder="6-digit code"></div>
+      <button class="btn btn-dark" style="width:100%;" type="submit">Log in</button>
+    </form>
+  </div>
+
+  <div id="dashBox" class="hidden">
+    <div class="grid" id="statsGrid" style="grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); margin-bottom:24px;"></div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+      <button class="btn btn-outline tab-btn" data-tab="payments">Pending payments</button>
+      <button class="btn btn-outline tab-btn" data-tab="settings">Bank settings</button>
+      <button class="btn btn-outline tab-btn" data-tab="users">Users</button>
+      <button class="btn btn-outline tab-btn" data-tab="media">Media moderation</button>
+      <button class="btn btn-outline tab-btn" data-tab="security">Admin security</button>
+    </div>
+
+    <div id="tab-payments" class="tab-panel"></div>
+    <div id="tab-settings" class="tab-panel hidden"></div>
+    <div id="tab-users" class="tab-panel hidden"></div>
+    <div id="tab-media" class="tab-panel hidden"></div>
+    <div id="tab-security" class="tab-panel hidden"></div>
+  </div>
+</div>
+
+<script src="/admin-panel/admin.js"></script>
+</body>
+</html>
